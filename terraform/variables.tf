@@ -15,3 +15,19 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+########################################
+# Database Variables
+########################################
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+  default     = "fintrust"
+}
+
+variable "db_username" {
+  description = "Database administrator username"
+  type        = string
+  default     = "admin"
+}
