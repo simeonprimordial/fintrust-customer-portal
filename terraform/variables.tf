@@ -47,3 +47,26 @@ variable "key_name" {
   type        = string
   default     = ""
 }
+
+########################################
+# Auto Scaling Variables
+########################################
+
+variable "desired_capacity" {
+  description = "Desired number of EC2 instances"
+  type        = number
+  default     = 2
+}
+
+variable "min_size" {
+  description = "Minimum number of EC2 instances"
+  type        = number
+  default     = 2
+}
+
+variable "max_size" {
+  description = "Maximum number of EC2 instances"
+  type        = number
+  default     = 4
+}
+
