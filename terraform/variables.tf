@@ -32,6 +32,13 @@ variable "db_username" {
   default     = "admin"
 }
 
+variable "db_password" {
+  description = "RDS master password"
+  type        = string
+  default     = "Fintrust123!"
+}
+
+
 ########################################
 # EC2 Variables
 ########################################

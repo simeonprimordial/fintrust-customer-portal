@@ -18,15 +18,6 @@ resource "aws_db_subnet_group" "main" {
   )
 }
 
-########################################
-# Random Database Password
-########################################
-
-resource "random_password" "db_password" {
-  length           = 20
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>?"
-}
 
 ########################################
 # Amazon RDS MySQL Instance
@@ -47,7 +38,7 @@ resource "aws_db_instance" "main" {
 
   db_name  = var.db_name
   username = var.db_username
-  password = random_password.db_password.result
+  password = var.db_password
 
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]
