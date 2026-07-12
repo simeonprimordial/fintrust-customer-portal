@@ -32,7 +32,7 @@ resource "aws_lb" "main" {
 
 resource "aws_lb_target_group" "main" {
   name     = "${local.name_prefix}-tg"
-  port     = 80
+  port     = 5000
   protocol = "HTTP"
 
   vpc_id = aws_vpc.main.id

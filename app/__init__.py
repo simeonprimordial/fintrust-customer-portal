@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import Flask
 
 from .config import Config
@@ -14,7 +18,7 @@ def create_app():
     from .routes import main
     app.register_blueprint(main)
 
-    # with app.app_context():
-    #     db.create_all()
+    with app.app_context():
+        db.create_all()
 
     return app
