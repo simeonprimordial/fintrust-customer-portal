@@ -35,9 +35,11 @@ def add_customer():
             email=request.form["email"],
             balance=float(request.form["balance"])
         )
+
         db.session.add(new_customer)
         db.session.commit()
 
+        return redirect(url_for("main.customer_list"))
 
     return render_template("add_customer.html")
 
@@ -46,20 +48,15 @@ def edit_customer(id):
 
     customer = Customer.query.get_or_404(id)
 
-    if customer is None:
-        return "Customer not found", 404
-
     if request.method == "POST":
 
-        customer["name"] = request.form["name"]
-        customer["email"] = request.form["email"]
-        customer["balance"] = float(
-            request.form["balance"]
-        )
+        customer.name = request.form["name"]
+        customer.email = request.form["email"]
+        customer.balance = float(request.form["balance"])
 
-        return redirect(
-            url_for("main.customer_list")
-        )
+        db.session.commit()
+
+        return redirect(url_for("main.customer_list"))
 
     return render_template(
         "edit_customer.html",
