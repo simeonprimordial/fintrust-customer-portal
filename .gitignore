@@ -1,1 +1,19 @@
-.env
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+
+# Terraform
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/terraform.tfvars
+**/crash.log
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
