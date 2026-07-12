@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h2>Add Customer</h2>
+
+<form method="POST">
+
+<div class="mb-3">
+
+<label>Name</label>
+
+<input
+class="form-control"
+name="name"
+required>
+
+</div>
+
+<div class="mb-3">
+
+<label>Email</label>
+
+<input
+type="email"
+class="form-control"
+name="email"
+required>
+
+</div>
+
+<div class="mb-3">
+
+<label>Balance</label>
+
+<input
+type="number"
+step="0.01"
+class="form-control"
+name="balance"
+required>
+
+</div>
+
+<button
+class="btn btn-primary">
+
+Save Customer
+
+</button>
+
+</form>
+
+</div>
+
+{% endblock %}
