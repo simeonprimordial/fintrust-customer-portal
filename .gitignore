@@ -16,4 +16,6 @@ Thumbs.db
 .vscode/
 
 # Logs
-*.log
+*.logterraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/*.tfvars
