@@ -3,7 +3,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker)
 ![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-Web_App-black?logo=flask)
-![License](https://img.shields.io/badge/License-MIT-green)
+![License](https://img.shields.io/badge/License-MIT-gree
 
 # FinTrust Customer Portal
 
@@ -26,25 +26,9 @@ The application is built with Flask and SQLAlchemy, containerized using Docker, 
 
 ---
 
-# Architecture
+## AWS Architecture
 
-```
-                    Internet
-                        │
-                        ▼
-          Application Load Balancer
-                        │
-        ┌───────────────┴───────────────┐
-        │                               │
-        ▼                               ▼
-    EC2 Instance                    EC2 Instance
- (Docker Container)             (Docker Container)
-        │                               │
-        └───────────────┬───────────────┘
-                        │
-                        ▼
-                Amazon RDS (MySQL)
-```
+![AWS Architecture](docs/architecture-diagram.png)
 
 ---
 
@@ -70,6 +54,17 @@ The infrastructure is deployed using Terraform and includes:
 
 ---
 
+## Deployment Workflow
+
+![Deployment Workflow](docs/deployment-diagram.png)
+
+---
+
+## Application Request Flow
+
+![Sequence Diagram](docs/sequence-diagram.png)
+
+---
 # Technology Stack
 
 ## Cloud
