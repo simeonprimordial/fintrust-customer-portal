@@ -3,7 +3,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker)
 ![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
 ![Flask](https://img.shields.io/badge/Flask-Web_App-black?logo=flask)
-![License](https://img.shields.io/badge/License-MIT-gree
+
 
 # FinTrust Customer Portal
 
