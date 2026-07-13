@@ -29,7 +29,7 @@ The application is built with Flask and SQLAlchemy, containerized using Docker, 
 <h2 align="center">AWS Architecture</h2>
 
 <p align="center">
-  <img src="docs/architecture.png" alt="AWS Architecture" width="450">
+  <img src="docs/architecture.png" alt="AWS Architecture" width="900">
 </p>
 
 ---
@@ -59,7 +59,7 @@ The infrastructure is deployed using Terraform and includes:
 <h2 align="center">Deployment Workflow</h2>
 
 <p align="center">
-  <img src="docs/deployment-diagram.png" alt="Deployment Workflow" width="450">
+  <img src="docs/deployment-diagram.png" alt="Deployment Workflow" width="900">
 </p>
 
 ---
@@ -67,7 +67,7 @@ The infrastructure is deployed using Terraform and includes:
 <h2 align="center">Sequence Diagram</h2>
 
 <p align="center">
-  <img src="docs/sequence-diagram.png" alt="Sequence Diagram" width="450">
+  <img src="docs/sequence-diagram.png" alt="Sequence Diagram" width="900">
 </p>
 
 ---
