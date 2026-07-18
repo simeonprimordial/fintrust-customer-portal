@@ -46,11 +46,14 @@ if [ -z "$DB_USERNAME" ] || [ -z "$DB_PASSWORD" ] || [ -z "$APP_SECRET_VALUE" ];
   exit 1
 fi
 
-# Authenticate to ECR using the instance role and pull the application image.
+# Authenticate to the ECR registry host using the instance role, then pull the
+# image from the complete repository URL.
+ECR_REGISTRY=$(printf '%s' "${ecr_repo}" | cut -d/ -f1)
+
 aws ecr get-login-password --region "${aws_region}" \
   | docker login \
       --username AWS \
-      --password-stdin "${ecr_repo}"
+      --password-stdin "$ECR_REGISTRY"
 
 docker pull "${ecr_repo}:latest"
 
