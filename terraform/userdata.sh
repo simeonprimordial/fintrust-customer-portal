@@ -1,46 +1,82 @@
 #!/bin/bash
-set -eux
+set -euo pipefail
 
-# Update packages
-dnf update -y
+# Restrict permissions on every file created by this script.
+umask 077
 
-# Install Docker
-dnf install -y docker
+# Install and start Docker.
+dnf install -y docker python3
+systemctl enable --now docker
 
-# Enable Docker
-systemctl enable docker
-systemctl start docker
+get_secret_value() {
+  local secret_id="$1"
+  local value=""
 
-# Login to Amazon ECR
-aws ecr get-login-password --region ${aws_region} \
-| docker login \
---username AWS \
---password-stdin ${ecr_repo}
+  # IAM role and network access can take a short time to become available
+  # during first boot, so retry without ever printing the secret value.
+  for _ in $(seq 1 12); do
+    if value=$(aws secretsmanager get-secret-value \
+      --region "${aws_region}" \
+      --secret-id "$secret_id" \
+      --query SecretString \
+      --output text 2>/dev/null); then
+      printf '%s' "$value"
+      return 0
+    fi
 
-# Pull latest image
-docker pull ${ecr_repo}:latest
+    sleep 10
+  done
 
-# Create application directory
-mkdir -p /opt/fintrust
+  echo "Unable to retrieve required secret: $secret_id" >&2
+  return 1
+}
 
-# Create environment file
-cat > /opt/fintrust/.env <<EOF
-DB_HOST=${db_host}
-DB_NAME=${db_name}
-DB_USERNAME=${db_username}
-DB_PASSWORD=${db_password}
-SECRET_KEY=${secret_key}
-EOF
+# RDS stores its managed master credential as a JSON secret containing
+# username and password. The Flask secret is stored as a plaintext value.
+DB_SECRET_JSON=$(get_secret_value "${db_secret_arn}")
+APP_SECRET_VALUE=$(get_secret_value "${app_secret_arn}")
 
-# Give networking a moment
-sleep 20
+DB_USERNAME=$(DB_SECRET_JSON="$DB_SECRET_JSON" python3 -c \
+  'import json, os; print(json.loads(os.environ["DB_SECRET_JSON"])["username"])')
+DB_PASSWORD=$(DB_SECRET_JSON="$DB_SECRET_JSON" python3 -c \
+  'import json, os; print(json.loads(os.environ["DB_SECRET_JSON"])["password"])')
 
-# Run container
-docker rm -f fintrust-app || true
+if [ -z "$DB_USERNAME" ] || [ -z "$DB_PASSWORD" ] || [ -z "$APP_SECRET_VALUE" ]; then
+  echo "A required application secret was empty." >&2
+  exit 1
+fi
+
+# Authenticate to ECR using the instance role and pull the application image.
+aws ecr get-login-password --region "${aws_region}" \
+  | docker login \
+      --username AWS \
+      --password-stdin "${ecr_repo}"
+
+docker pull "${ecr_repo}:latest"
+
+# Write a root-readable-only environment file for the container.
+install -d -m 700 /opt/fintrust
+install -m 600 /dev/null /opt/fintrust/.env
+
+{
+  printf 'DB_HOST=%s\n' "${db_host}"
+  printf 'DB_PORT=%s\n' "3306"
+  printf 'DB_NAME=%s\n' "${db_name}"
+  printf 'DB_USERNAME=%s\n' "$DB_USERNAME"
+  printf 'DB_PASSWORD=%s\n' "$DB_PASSWORD"
+  printf 'SECRET_KEY=%s\n' "$APP_SECRET_VALUE"
+} > /opt/fintrust/.env
+
+# Remove secret material from the bootstrap shell environment as soon as the
+# protected environment file has been created.
+unset DB_SECRET_JSON DB_PASSWORD APP_SECRET_VALUE
+
+# Replace any previous container and start the current application image.
+docker rm -f fintrust-app >/dev/null 2>&1 || true
 
 docker run -d \
   --name fintrust-app \
   --restart unless-stopped \
   --env-file /opt/fintrust/.env \
   -p 5000:5000 \
-  ${ecr_repo}:latest
+  "${ecr_repo}:latest"
