@@ -1,0 +1,13 @@
+# Copy this file to terraform.tfvars and replace only the resource identifiers.
+# Never place passwords, API keys, or secret values in Terraform variable files.
+
+ecr_repository_url = "123456789012.dkr.ecr.us-east-1.amazonaws.com/fintrust-customer-portal"
+app_secret_arn      = "arn:aws:secretsmanager:us-east-1:123456789012:secret:fintrust/dev/flask-secret-AbCdEf"
+
+# Optional overrides
+# aws_region       = "us-east-1"
+# environment      = "dev"
+# instance_type    = "t2.micro"
+# desired_capacity = 2
+# min_size         = 2
+# max_size         = 4

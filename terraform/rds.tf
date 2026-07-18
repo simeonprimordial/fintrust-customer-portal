@@ -18,7 +18,6 @@ resource "aws_db_subnet_group" "main" {
   )
 }
 
-
 ########################################
 # Amazon RDS MySQL Instance
 ########################################
@@ -38,7 +37,10 @@ resource "aws_db_instance" "main" {
 
   db_name  = var.db_name
   username = var.db_username
-  password = var.db_password
+
+  # RDS generates, stores, and rotates the master password in Secrets Manager.
+  # No database password is accepted as a Terraform input or stored in source code.
+  manage_master_user_password = true
 
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]

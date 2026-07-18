@@ -1,19 +1,33 @@
 import os
+
+from sqlalchemy.engine import URL
+
+
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
+    """Application configuration loaded exclusively from the environment."""
 
-    DB_USERNAME = os.getenv("DB_USERNAME")
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
-    DB_HOST = os.getenv("DB_HOST")
-    DB_PORT = os.getenv("DB_PORT", "3306")
-    DB_NAME = os.getenv("DB_NAME")
+    # Fail fast instead of silently starting with a public development secret.
+    SECRET_KEY = os.environ["SECRET_KEY"]
 
-    SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    DB_USERNAME = os.environ["DB_USERNAME"]
+    DB_PASSWORD = os.environ["DB_PASSWORD"]
+    DB_HOST = os.environ["DB_HOST"]
+    DB_PORT = int(os.getenv("DB_PORT", "3306"))
+    DB_NAME = os.environ["DB_NAME"]
+
+    # URL.create safely escapes generated passwords containing reserved URL
+    # characters such as @, :, /, or #.
+    SQLALCHEMY_DATABASE_URI = URL.create(
+        drivername="mysql+pymysql",
+        username=DB_USERNAME,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=DB_PORT,
+        database=DB_NAME,
     )
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,   # tests the connection before using it, reconnects if dead
-        "pool_recycle": 280,    # recycle connections before RDS/NAT idle timeout kicks in
+        "pool_pre_ping": True,
+        "pool_recycle": 280,
     }
