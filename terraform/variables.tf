@@ -32,12 +32,29 @@ variable "db_username" {
   default     = "admin"
 }
 
-variable "db_password" {
-  description = "RDS master password"
+########################################
+# Application Deployment Variables
+########################################
+
+variable "ecr_repository_url" {
+  description = "Full Amazon ECR repository URL containing the application image"
   type        = string
-  default     = "Fintrust123!"
+
+  validation {
+    condition     = can(regex("^[0-9]{12}\\.dkr\\.ecr\\.[a-z0-9-]+\\.amazonaws\\.com/.+$", var.ecr_repository_url))
+    error_message = "ecr_repository_url must be a valid private Amazon ECR repository URL."
+  }
 }
 
+variable "app_secret_arn" {
+  description = "ARN of an existing AWS Secrets Manager secret containing the Flask SECRET_KEY as a plaintext secret value"
+  type        = string
+
+  validation {
+    condition     = can(regex("^arn:aws[a-zA-Z-]*:secretsmanager:[a-z0-9-]+:[0-9]{12}:secret:.+$", var.app_secret_arn))
+    error_message = "app_secret_arn must be a valid AWS Secrets Manager secret ARN."
+  }
+}
 
 ########################################
 # EC2 Variables
@@ -76,4 +93,3 @@ variable "max_size" {
   type        = number
   default     = 4
 }
-
